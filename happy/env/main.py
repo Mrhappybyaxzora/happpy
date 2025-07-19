@@ -4,8 +4,6 @@ from happy.logging import Logger
 from os import getenv, environ
 
 ENVPATH = ".env"
-fun = dotenv.get_key if ENVPATH else getenv
-
 logger = Logger(__file__)
 
 Keys = {
@@ -22,7 +20,13 @@ Keys = {
 }
 
 for key, value in Keys.items():
-    envvar = fun(ENVPATH, key)
+    # First try to get from system environment variables (for Docker/production)
+    envvar = getenv(key)
+    
+    # If not found in system env, try .env file (for local development)
+    if envvar is None and ENVPATH:
+        envvar = dotenv.get_key(ENVPATH, key)
+    
     if envvar is None:
         logger.internal_error(
             "Please set the " + key + " environment variable",

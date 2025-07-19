@@ -11,30 +11,6 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
-# Define build arguments for all environment variables
-ARG MongoUri
-ARG Cohere
-ARG HuggingFace
-ARG OpenAI
-ARG Groq
-ARG GEMINI_API_KEY
-ARG Tunestudio
-ARG PLAY_HT_USER_ID
-ARG PLAY_HT_API_KEY
-ARG ELEVENLABS_API_KEY
-
-# Set environment variables from build arguments
-ENV MongoUri=$MongoUri \
-    Cohere=$Cohere \
-    HuggingFace=$HuggingFace \
-    OpenAI=$OpenAI \
-    Groq=$Groq \
-    GEMINI_API_KEY=$GEMINI_API_KEY \
-    Tunestudio=$Tunestudio \
-    PLAY_HT_USER_ID=$PLAY_HT_USER_ID \
-    PLAY_HT_API_KEY=$PLAY_HT_API_KEY \
-    ELEVENLABS_API_KEY=$ELEVENLABS_API_KEY
-
 # Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
