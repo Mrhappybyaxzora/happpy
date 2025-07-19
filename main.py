@@ -39,7 +39,7 @@ async def startup_event():
         if missing_vars:
             print(f"⚠️  Warning: Missing environment variables: {missing_vars}")
         else:
-            print("✅ All required environment variables are set")
+            print("✅ Environment variables loaded successfully")
     except Exception as e:
         print(f"❌ Error during startup: {e}")
 
@@ -51,17 +51,7 @@ templates = Jinja2Templates(directory="templates")
 # App Init -----------------------------------------------------------------/
 
 # Database Init ------------------------------------------------------------
-try:
-    from happy.env import Keys
-    print("🔧 Environment variables loaded successfully")
-    print(f"📊 MongoDB URI: {'*' * 10 if Keys.get('MongoUri') else 'NOT SET'}")
-    print(f"🤖 OpenAI: {'*' * 10 if Keys.get('OpenAI') else 'NOT SET'}")
-    print(f"🔮 Gemini: {'*' * 10 if Keys.get('GEMINI_API_KEY') else 'NOT SET'}")
-    print(f"🎵 PlayHT: {'*' * 10 if Keys.get('PLAY_HT_API_KEY') else 'NOT SET'}")
-    print(f"🎤 ElevenLabs: {'*' * 10 if Keys.get('ELEVENLABS_API_KEY') else 'NOT SET'}")
-except Exception as e:
-    print(f"❌ Error loading environment variables: {e}")
-
+# Environment variables are loaded in the startup event handler
 db = MongoDB()
 
 file_db: dict[str, File] = {}

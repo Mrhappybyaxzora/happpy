@@ -2,9 +2,14 @@ import dotenv
 import dotenv.variables
 from happy.logging import Logger
 from os import getenv, environ
+import threading
 
 ENVPATH = ".env"
 logger = Logger(__file__)
+
+# Thread-safe initialization
+_init_lock = threading.Lock()
+_initialized = False
 
 Keys = {
     "Groq": None,
@@ -19,21 +24,34 @@ Keys = {
     "ELEVENLABS_API_KEY": None
 }
 
-for key, value in Keys.items():
-    # First try to get from system environment variables (for Docker/production)
-    envvar = getenv(key)
+def _initialize_env():
+    """Initialize environment variables once."""
+    global _initialized
     
-    # If not found in system env, try .env file (for local development)
-    if envvar is None and ENVPATH:
-        envvar = dotenv.get_key(ENVPATH, key)
-    
-    if envvar is None:
-        logger.internal_error(
-            "Please set the " + key + " environment variable",
-            "Environment variable " + key + " not found"
-        )
-    else:
-        Keys[key] = envvar
-        environ[key] = envvar
+    with _init_lock:
+        if _initialized:
+            return
+            
+        for key, value in Keys.items():
+            # First try to get from system environment variables (for Docker/production)
+            envvar = getenv(key)
+            
+            # If not found in system env, try .env file (for local development)
+            if envvar is None and ENVPATH:
+                envvar = dotenv.get_key(ENVPATH, key)
+            
+            if envvar is None:
+                logger.internal_error(
+                    "Please set the " + key + " environment variable",
+                    "Environment variable " + key + " not found"
+                )
+            else:
+                Keys[key] = envvar
+                environ[key] = envvar
+        
+        _initialized = True
+
+# Initialize environment variables
+_initialize_env()
     
 
